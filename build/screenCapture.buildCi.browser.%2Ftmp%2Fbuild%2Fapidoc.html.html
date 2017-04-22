@@ -1,0 +1,191 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://github.com/msfeldstein/gitignore#readme">gitignore (v0.6.0)</a>
+</h1>
+<h4>Automatically fetch gitignore files for any project type from github into your new project</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.gitignore">module gitignore</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gitignore.getTypes">
+            function <span class="apidocSignatureSpan">gitignore.</span>getTypes
+            <span class="apidocSignatureSpan">(callback)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gitignore.writeFile">
+            function <span class="apidocSignatureSpan">gitignore.</span>writeFile
+            <span class="apidocSignatureSpan">(options, callback)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.gitignore" id="apidoc.module.gitignore">module gitignore</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.gitignore.getTypes" id="apidoc.element.gitignore.getTypes">
+        function <span class="apidocSignatureSpan">gitignore.</span>getTypes
+        <span class="apidocSignatureSpan">(callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">getTypes = function (callback){
+  var types = [];
+  https.get({host: "api.github.com", path: "/repos/github/gitignore/contents", headers: {"User-Agent": "gitignore node app"}}, function
+(res) {
+    if (res.statusCode !== 200) {
+      var err = new Error("somethingWentWrong");
+      err.statusCode = res.statusCode;
+      return callback(err);
+    }
+    var body = "";
+    res.on("data", function(chunk) {
+      body += chunk;
+    });
+    res.on("end", function() {
+      var json = JSON.parse(body);
+      for(var i = 0; i &lt; json.length; ++i) {
+        var name = json[i].name;
+        var cleanName = name.substr(0, name.indexOf('.'));
+        if (cleanName.length &gt; 0 &amp;&amp; name.match(/\.gitignore$/)){
+          types.push(cleanName);
+        }
+      }
+      callback(null, types);
+    });
+  }).on("error", callback);
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+### and `require`
+
+    var gi = require(`gitignore`);
+
+## API
+
+### `.<span class="apidocCodeKeywordSpan">getTypes</span>(callback)`
+
+Gets the types via `https` request to GitHub.
+
+#### `callback(err, types)`
+
+If an error occurred, or the request failed, an `Error` object is passed as the first parameter. If the types were successfully
+requested, an array of types is passed as the second parameter with `null` as the first.
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.gitignore.writeFile" id="apidoc.element.gitignore.writeFile">
+        function <span class="apidocSignatureSpan">gitignore.</span>writeFile
+        <span class="apidocSignatureSpan">(options, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">writeFile = function (options, callback){
+  if(!options.type){
+    return callback(new Error("noTypeProvided"));
+  }
+  if(!options.file &amp;&amp; !options.writable){
+    return callback(new Error("noWritableProvided"));
+  }
+  https.get("https://raw.githubusercontent.com/github/gitignore/master/" + options.type + ".gitignore", function(res) {
+    if (res.statusCode !== 200) {
+      var err = new Error("typeDoesNotExist");
+      err.statusCode = res.statusCode;
+      return callback(err);
+    }
+    res.pipe(options.file || options.writable);
+    return callback();
+  }).on("error", callback);
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+Gets the types via `https` request to GitHub.
+
+#### `callback(err, types)`
+
+If an error occurred, or the request failed, an `Error` object is passed as the first parameter. If the types were successfully
+requested, an array of types is passed as the second parameter with `null` as the first.
+
+### `.<span class="apidocCodeKeywordSpan">writeFile</span>(options, callback)`
+
+Gets the `.gitignore` file from GitHub of the specified `options.type` and stores it in the writable stream at `options.file` or
+ `options.writable`.
+
+#### `options`
+
+`.type` (string) - The type associated with the `.gitignore` file to be fetched
+`.file`, `.writable` (writable stream) - A writable stream (a file, sdtout, etc) that the results should be written to
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>
