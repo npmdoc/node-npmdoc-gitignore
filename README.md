@@ -1,6 +1,6 @@
 # npmdoc-gitignore
 
-#### api documentation for  [gitignore (v0.6.0)](https://github.com/msfeldstein/gitignore#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-gitignore.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-gitignore) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-gitignore.svg)](https://travis-ci.org/npmdoc/node-npmdoc-gitignore)
+#### basic api documentation for  [gitignore (v0.6.0)](https://github.com/msfeldstein/gitignore#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-gitignore.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-gitignore) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-gitignore.svg)](https://travis-ci.org/npmdoc/node-npmdoc-gitignore)
 
 #### Automatically fetch gitignore files for any project type from github into your new project
 
